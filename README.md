@@ -2,7 +2,7 @@
 
 An educational app to explore basic Artificial Intelligence (AI) concepts through interactive, visual learning.
 
-## 🌟 Features
+##  🌟 Features
 
 - Bilingual interface (English / Spanish)
 - Responsive design (desktop and mobile)
