@@ -1,0 +1,139 @@
+body {
+  font-family: 'Segoe UI', 'Arial', 'Helvetica', sans-serif;
+  text-align: center;
+  background-color: #f4f9fb; /* fondo aún más neutro y suave */
+  padding: 20px;
+  color: #222; /* Texto base con buen contraste */
+  letter-spacing: 0.01em;
+  line-height: 1.45;
+}
+
+h1 {
+  color: #114477;
+}
+
+/* Botones con más contraste */
+button {
+  display: block;
+  margin: 10px auto;
+  padding: 12px 24px;
+  font-size: 16px;
+  border-radius: 12px;
+  border: none;
+  background-color: #ff9800;   /* naranja fuerte para más contraste */
+  color: #fff;                 /* texto blanco para contraste */
+  font-weight: bold;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+  cursor: pointer;
+  box-shadow: 0 1.5px 4px rgba(0,0,0,0.08);
+}
+button:hover {
+  background: #e65100;
+  color: #fff;
+}
+
+button#help-btn {
+  background-color: #1565c0;   /* azul más fuerte */
+  color: #fff;
+}
+button#help-btn:hover {
+  background: #003c8f;
+  color: #fff;
+}
+
+/* Burbuja de chat GPT con más contraste */
+.chat-bubble {
+  max-width: 90%;
+  margin: 12px auto;
+  padding: 15px 20px;
+  background: #fffde4; /* Amarillo crema */
+  border-radius: 22px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+  font-size: 1.1em;
+  color: #4d3900;  /* marrón oscuro, legible */
+  text-align: left;
+  position: relative;
+  border: 1.5px solid #ffd54f;
+  animation: fadeInChat 0.5s cubic-bezier(0.4, 0.6, 0.2, 1);
+}
+
+@keyframes fadeInChat {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.chat-bubble::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 28px;
+  width: 0;
+  height: 0;
+  border: 13px solid transparent;
+  border-top-color: #fffde4;
+  border-bottom: 0;
+  margin-left: -8px;
+  margin-bottom: -13px;
+}
+
+.chat-bubble:empty {
+  display: none;
+}
+
+/* Imágenes de bebé ajustadas */
+#baby-reaction img {
+  max-width: 150px;
+  width: 60vw;
+  height: auto;
+  display: block;
+  margin: 12px auto 8px auto;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(255,179,71,0.12);
+}
+
+#game {
+  margin-top: 22px;
+  margin-bottom: 8px;
+}
+
+#question-container {
+  margin-bottom: 18px;
+  font-size: 1.15em;
+  font-weight: 500;
+}
+
+/* Responsive para móviles */
+@media (max-width: 600px) {
+  body {
+    padding: 5px;
+  }
+  h1 {
+    font-size: 1.15em;
+  }
+  .chat-bubble {
+    font-size: 1em;
+    padding: 10px 12px;
+    max-width: 99vw;
+  }
+  button {
+    font-size: 1em;
+    padding: 10px 0;
+    width: 94vw;
+    min-width: 100px;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  #game {
+    padding: 0;
+  }
+  #baby-reaction img {
+    max-width: 80vw;
+    height: auto;
+  }
+}

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learn AI by Playing / Aprende IA Jugando</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Botón Home para volver al inicio -->
+  <button id="home-btn" class="home-btn" onclick="resetGame()">
+    🏠 Home
+  </button>
+
+  <!-- 🚀 Landing: imagen familiar con robot y título bilingüe -->
+  <section id="landing" style="text-align: center;">
+    <img
+      src="images/landing-family-robot.png"
+      alt="Family playing AI game with little robot"
+      style="max-width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin: 20px 0;"
+    />
+    <h1>
+      Learn AI by Playing 🎉
+      <span style="display:block; font-size:0.8em; margin-top:4px;">¡Aprende IA Jugando 🎉!</span>
+    </h1>
+    <!-- Selector de idioma -->
+    <div id="language-selector">
+      <p>Select your language / Selecciona tu idioma:</p>
+      <button onclick="setLanguage('en')">English 🇬🇧</button>
+      <button onclick="setLanguage('es')">Español 🇪🇸</button>
+    </div>
+  </section>
+
+  <!-- 🚩 Juego: oculto inicialmente -->
+  <section id="game" style="display: none; text-align: center;">
+    <div id="question-container"></div>
+    <div id="options"></div>
+    <div id="feedback" class="chat-bubble"></div>
+
+    <!-- Imagen de reacción -->
+    <div id="baby-reaction">
+      <img id="baby-img" src="" alt="" />
+    </div>
+
+    <!-- Botones de acción -->
+    <button id="change-lang-btn" onclick="resetGame()">🌐</button>
+    <button id="help-btn" onclick="askAI()">❓Need a hint?</button>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>

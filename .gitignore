@@ -129,5 +129,8 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
+# Replit configuration directory
+.config
+
 # Replit debugger
 .breakpoints
