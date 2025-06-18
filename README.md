@@ -55,6 +55,12 @@ Developed and tested on **Replit** free tier (server sleeps after \~1 h).  A 
 
 ---
 
+## 📷 Screenshot
+
+![Screenshot](images/landing-family-robot.png)
+
+---
+
 ## ✨ Author
 
 **Toni Molina** – created for the *Let’s Build AI* course (Jersey 2025).
