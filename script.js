@@ -1,214 +1,230 @@
-let language = "en"; // por defecto inglés
-let current = 0;
-
-let questions = {
+/* -------------------- BANCO DE PREGUNTAS -------------------- */
+const questions = {
   en: [
-    {
-      question: "What is Artificial Intelligence?",
+    { question: "What does AI stand for?",
+      options: ["Adobe Illustrator", "Artificial Intelligence", "Amazing Idea"],
+      correct: 1 },
+    { question: "AI systems can learn from _____ to improve over time.",
+      options: ["paintings", "data", "magic"],
+      correct: 1 },
+    { question: "Which of these is an example of AI?",
+      options: ["Smartphone voice assistant", "Regular light bulb", "Paper notebook"],
+      correct: 0 },
+    { question: "AI is basically…",
       options: [
-        "A video game",
-        "A cooking technique",
-        "The ability of a machine to imitate human intelligence",
-        "A type of hardware"
+        "robots plotting to steal snacks 🤖🍪",
+        "computer systems that can perform tasks that need intelligence",
+        "a secret superhero league"
       ],
-      correct: 2
-    },
-    {
-      question: "Which one is a real use of AI?",
-      options: [
-        "Painting walls",
-        "Forecasting the weather",
-        "Making sandwiches",
-        "Charging batteries"
-      ],
-      correct: 1
-    },
-    {
-      question: "What does a neural network try to mimic?",
-      options: [
-        "The human brain",
-        "A telephone line",
-        "A factory",
-        "A rocket engine"
-      ],
-      correct: 0
-    }
+      correct: 1 }
   ],
   es: [
-    {
-      question: "¿Qué es la Inteligencia Artificial?",
+    { question: "¿Qué significa IA?",
+      options: ["Inteligencia Artificial", "Isla Atlántica", "Insectos Alegres"],
+      correct: 0 },
+    { question: "Los sistemas de IA mejoran porque aprenden de los _____.",
+      options: ["datos", "chismes", "dibujos"],
+      correct: 0 },
+    { question: "¿Cuál de estos es un ejemplo de IA?",
+      options: ["Asistente de voz del móvil", "Bombilla normal", "Cuaderno de papel"],
+      correct: 0 },
+    { question: "La IA es básicamente…",
       options: [
-        "Un videojuego",
-        "Una técnica de cocina",
-        "La capacidad de una máquina para imitar la inteligencia humana",
-        "Un tipo de hardware"
+        "robots que planean robar galletas 🤖🍪",
+        "sistemas informáticos capaces de tareas que requieren inteligencia",
+        "un club secreto de superhéroes"
       ],
-      correct: 2
-    },
-    {
-      question: "¿Cuál es un uso real de la IA?",
-      options: [
-        "Pintar paredes",
-        "Predecir el clima",
-        "Hacer bocadillos",
-        "Cargar baterías"
-      ],
-      correct: 1
-    },
-    {
-      question: "¿Qué intenta imitar una red neuronal?",
-      options: [
-        "El cerebro humano",
-        "Una línea telefónica",
-        "Una fábrica",
-        "Un motor de cohete"
-      ],
-      correct: 0
-    }
+      correct: 1 }
   ]
 };
 
-function setLanguage(lang) {
-  language = lang;
-  current = 0;
+/* --------------------------------- Estado -------------------------------- */
+let language = "en";
+let current  = 0;
+let musicOn  = true;
 
-  // Ocultar la imagen de portada
-  const hero = document.getElementById("landing-hero");
-  if (hero) hero.style.display = "none";
-  // Ocultar selector e iniciar juego
-  document.getElementById("language-selector").style.display = "none";
-  document.getElementById("game").style.display = "block";
+/* --------------------------------- Música -------------------------------- */
+const bgMusic = new Audio("sounds/Vivid Beat.mp3");
+bgMusic.loop = true;
+bgMusic.volume = 0.3;
+bgMusic.preload = "auto";
+bgMusic.muted = true;
+const MUSIC_START_OFFSET = 1;
+bgMusic.addEventListener("loadedmetadata", () => {
+  if (MUSIC_START_OFFSET < bgMusic.duration) bgMusic.currentTime = MUSIC_START_OFFSET;
+});
 
-  // Actualiza botón cambiar idioma
-  const changeBtn = document.getElementById("change-lang-btn");
-  changeBtn.textContent = language === "en" ? "Change language" : "Cambiar idioma";
-
-  // Actualiza texto del botón de ayuda según idioma
-  const helpBtn = document.getElementById("help-btn");
-  helpBtn.textContent = language === "en"
-    ? "💡 Need a hint? Ask AI"
-    : "💡 ¿Necesitas una pista? Pregunta a la IA";
-
-  showQuestion();
+/* --------- Efectos de sonido --------- */
+function createSFX(name){
+  const a = new Audio(`sounds/${name}.ogg`);
+  if (!a.canPlayType("audio/ogg")) a.src = `sounds/${name}.mp3`;
+  a.preload = "auto";
+  a.volume  = 0.6;
+  return a;
 }
+const sfxCorrect = createSFX("correct");
+const sfxWrong   = createSFX("wrong");
+const sfxWin     = createSFX("victory");
 
-function showQuestion() {
-  const q = questions[language][current];
-  const babyImg = document.getElementById("baby-img");
-  babyImg.src = "";
-  babyImg.alt = "";
-
-  document.getElementById("feedback").innerHTML = "";
-
-  if (!q) {
-    document.getElementById("question-container").textContent =
-      language === "en"
-        ? "🎉 You've completed all the questions!"
-        : "🎉 ¡Has completado todas las preguntas!";
-    document.getElementById("options").innerHTML = "";
-    babyImg.src = "images/party-baby.png";
-    babyImg.alt = "Celebrating baby";
-    return;
-  }
-
-  document.getElementById("question-container").textContent = q.question;
-  const optionsDiv = document.getElementById("options");
-  optionsDiv.innerHTML = "";
-
-  q.options.forEach((opt, index) => {
-    const btn = document.createElement("button");
-    btn.textContent = opt;
-    btn.onclick = () => checkAnswer(index);
-    optionsDiv.appendChild(btn);
+/* ---------------------- Utilidad: scroll al fondo ------------------------ */
+function scrollToBottom() {
+  requestAnimationFrame(() => {
+    const anchor = document.getElementById("bottom-anchor");
+    if (anchor) anchor.scrollIntoView({ behavior: "smooth", block: "end" });
   });
 }
 
-function checkAnswer(selected) {
-  const correct = questions[language][current].correct;
-  const feedback = document.getElementById("feedback");
-  const babyImg = document.getElementById("baby-img");
-
-  if (selected === correct) {
-    feedback.innerHTML = `<div class="chat-bubble">${
-      language === "en" ? "🎉 Correct!" : "🎉 ¡Correcto!"
-    }</div>`;
-    babyImg.src = "images/happy-baby.png";
-    babyImg.alt = "Happy baby";
-    current++;
-    setTimeout(showQuestion, 1500);
-  } else {
-    feedback.innerHTML = `<div class="chat-bubble">${
-      language === "en" ? "😮 Try again!" : "😮 ¡Intenta de nuevo!"
-    }</div>`;
-    babyImg.src = "images/sad-baby.png";
-    babyImg.alt = "Sad baby";
+/* --------------- Configuración inicial de botones ------------------------ */
+window.addEventListener("DOMContentLoaded", () => {
+  /* crea ancla invisible al final del body (una sola vez) */
+  if (!document.getElementById("bottom-anchor")) {
+    const a = document.createElement("div");
+    a.id = "bottom-anchor";
+    a.style.height = "1px";
+    document.body.appendChild(a);
   }
-}
 
-function resetGame() {
-  language = "en";
-  current = 0;
+  const helpBtn  = document.getElementById("help-btn");
+  const musicBtn = document.getElementById("music-toggle");
 
-  // Mostrar la imagen de portada
-  const hero = document.getElementById("landing-hero");
-  if (hero) hero.style.display = "block";
-  // Ocultar juego y volver a selector
-  document.getElementById("game").style.display = "none";
-  document.getElementById("language-selector").style.display = "block";
+  if (helpBtn) helpBtn.textContent = "💡 Need a hint? Ask AI";
 
-  // Restaurar texto de botones a inglés por defecto
-  const changeBtn = document.getElementById("change-lang-btn");
-  changeBtn.textContent = "Change language";
-  const helpBtn = document.getElementById("help-btn");
-  helpBtn.textContent = "💡 Need a hint? Ask AI";
-
-  // Limpiar estado visual
-  const babyImg = document.getElementById("baby-img");
-  babyImg.src = "";
-  babyImg.alt = "";
-  document.getElementById("feedback").innerHTML = "";
-}
-
-// ✅ FUNCIÓN para pedir ayuda a la IA con icono
-async function askAI() {
-  const helpPrompt = language === "en"
-    ? "Explain in simple terms what Artificial Intelligence is."
-    : "Explica en términos simples qué es la Inteligencia Artificial.";
-
-  try {
-    const response = await fetch(
-      "https://701313b5-4ba0-45aa-b9d9-9341d55bb444-00-25qs3s0o42ffx.picard.replit.dev/ask",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: helpPrompt })
-      }
-    );
-
-    const data = await response.json();
-    const feedback = document.getElementById("feedback");
-    const iconIA = '🤖';
-    feedback.innerHTML = `<div class="chat-bubble">${iconIA} ${
-      data.response || (language === "en" ? "No response from the AI." : "No hay respuesta de la IA.")
-    }</div>`;
-  } catch (error) {
-    console.error("Error contacting AI:", error);
-    const feedback = document.getElementById("feedback");
-    const iconIA = '🤖';
-    feedback.innerHTML = `<div class="chat-bubble">${iconIA} ${
-      language === "en" ? "Error contacting AI." : "Error al contactar la IA."
-    }</div>`;
+  if (musicBtn) {
+    musicBtn.textContent = "🔊";
+    musicBtn.addEventListener("click", () => {
+      musicOn ? bgMusic.pause() : bgMusic.play().catch(() => {});
+      musicOn = !musicOn;
+      musicBtn.textContent = musicOn ? "🔊" : "🔇";
+    });
   }
-}
-
-// Inicializa al cargar la página
-window.addEventListener('load', () => {
-  // Ajusta botón de ayuda según idioma inicial
-  const helpBtn = document.getElementById("help-btn");
-  helpBtn.textContent = "💡 Need a hint? Ask AI";
 });
 
-// Exponer funciones a nivel global
+/* --------------------------- Cambio de idioma ---------------------------- */
+function setLanguage(lang) {
+  language = lang;
+  current  = 0;
+
+  document.getElementById("landing")?.style.setProperty("display", "none");
+  document.getElementById("language-selector")?.style.setProperty("display", "none");
+  document.getElementById("game")?.style.setProperty("display", "block");
+
+  const changeBtn = document.getElementById("change-lang-btn");
+  const helpBtn   = document.getElementById("help-btn");
+  if (changeBtn) changeBtn.textContent = language === "en" ? "Change language" : "Cambiar idioma";
+  if (helpBtn)   helpBtn.textContent   = language === "en"
+    ? "💡 Need a hint? Ask AI"
+    : "💡 ¿Necesitas una pista? Pregunta a la IA";
+
+  if (bgMusic.muted) bgMusic.muted = false;
+  bgMusic.play().catch(() => {});
+  showQuestion();
+}
+
+/* -------------------------- Flujo del juego ------------------------------ */
+function showQuestion() {
+  const q = questions[language][current];
+  const babyImg   = document.getElementById("baby-img");
+  const feedback  = document.getElementById("feedback");
+  const options   = document.getElementById("options");
+  const qContainer= document.getElementById("question-container");
+
+  babyImg.src = ""; babyImg.alt = "";
+  feedback.innerHTML = "";
+
+  if (!q) {
+    qContainer.textContent = language === "en"
+      ? "🎉 You've completed all the questions!"
+      : "🎉 ¡Has completado todas las preguntas!";
+    options.innerHTML = "";
+    babyImg.src = "images/party-baby.png";
+    babyImg.alt = "Celebrating baby";
+    sfxWin.play();
+    scrollToBottom();
+    return;
+  }
+
+  qContainer.textContent = q.question;
+  options.innerHTML = "";
+
+  q.options.forEach((opt, idx) => {
+    const btn = document.createElement("button");
+    btn.textContent = opt;
+    btn.addEventListener("click", () => checkAnswer(idx));
+    options.appendChild(btn);
+  });
+
+  scrollToBottom();
+}
+
+function checkAnswer(selected) {
+  const { correct } = questions[language][current];
+  const feedback = document.getElementById("feedback");
+  const babyImg  = document.getElementById("baby-img");
+
+  if (selected === correct) {
+    feedback.innerHTML = `<div class="chat-bubble">${language === "en" ? "🎉 Correct!" : "🎉 ¡Correcto!"}</div>`;
+    babyImg.src = "images/happy-baby.png";
+    babyImg.alt = "Happy baby";
+    sfxCorrect.currentTime = 0;
+    sfxCorrect.play();
+    current++;
+    setTimeout(showQuestion, 1400);
+  } else {
+    feedback.innerHTML = `<div class="chat-bubble">${language === "en" ? "😮 Try again!" : "😮 ¡Intenta de nuevo!"}</div>`;
+    babyImg.src = "images/sad-baby.png";
+    babyImg.alt = "Sad baby";
+    sfxWrong.currentTime = 0;
+    sfxWrong.play();
+    scrollToBottom();
+  }
+  scrollToBottom();
+}
+
+/* ------------------------------ Reiniciar -------------------------------- */
+function resetGame() {
+  language = "en";
+  current  = 0;
+
+  document.getElementById("landing")?.style.setProperty("display", "block");
+  document.getElementById("game")?.style.setProperty("display", "none");
+  document.getElementById("language-selector")?.style.setProperty("display", "block");
+
+  document.getElementById("question-container").textContent = "";
+  document.getElementById("options").innerHTML  = "";
+  document.getElementById("feedback").innerHTML = "";
+  const babyImg = document.getElementById("baby-img");
+  if (babyImg) { babyImg.src = ""; babyImg.alt = ""; }
+
+  const changeBtn = document.getElementById("change-lang-btn");
+  const helpBtn   = document.getElementById("help-btn");
+  if (changeBtn) changeBtn.textContent = "Change language";
+  if (helpBtn)   helpBtn.textContent   = "💡 Need a hint? Ask AI";
+}
+
+/* --------------------------- Pedir ayuda IA ------------------------------ */
+async function askAI() {
+  const prompt = language === "en"
+    ? "Explain in simple terms what Artificial Intelligence is."
+    : "Explica en términos simples qué es la Inteligencia Artificial.";
+  try {
+    const res = await fetch(
+      "https://701313b5-4ba0-45aa-b9d9-9341d55bb444-00-25qs3s0o42ffx.picard.replit.dev/ask",
+      { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt }) }
+    );
+    const { response } = await res.json();
+    showBubble(response || (language === "en" ? "No response from the AI." : "No hay respuesta de la IA."));
+  } catch (err) {
+    console.error("Error contacting AI:", err);
+    showBubble(language === "en" ? "Error contacting AI." : "Error al contactar la IA.");
+  }
+}
+
+function showBubble(text) {
+  document.getElementById("feedback").innerHTML = `<div class="chat-bubble">🤖 ${text}</div>`;
+  scrollToBottom();
+}
+
+/* --------------------------- Globals (HTML) ------------------------------ */
 window.setLanguage = setLanguage;
-window.resetGame = resetGame;
-window.askAI = askAI;
+window.resetGame   = resetGame;
+window.askAI       = askAI;
